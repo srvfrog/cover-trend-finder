@@ -488,7 +488,13 @@ color: var(–muted);
 
   function isCoverVideo(item) {
     const title = (item.snippet?.title || '').toLowerCase();
-    const coverKeywords = ['cover', '커버', 'covers', 'covering', 'covered'];
+    // 한국어, 영어, 일본어, 중국어(번체/간체) 커버 키워드
+    const coverKeywords = [
+      'cover', 'covers', 'covering', 'covered',
+      '커버',
+      'カバー', 'かばー',
+      '翻唱', '翻覆', '翻奏', '填词', '填詞'
+    ];
     return coverKeywords.some(k => title.includes(k));
   }
 
@@ -644,7 +650,7 @@ color: var(–muted);
           <li class="song-item" style="animation-delay:${delay}s">
             <span class="song-rank">${String(i+1).padStart(2,'0')}</span>
             <div class="song-info">
-              <div class="song-title">${title}</div>
+              <a class="song-title" href="https://www.youtube.com/watch?v=${item.id}" target="_blank">${title}</a>
               <div class="song-channel">${channel}</div>
               <div class="song-tags">
                 <span class="tag tag-music">음악</span>
