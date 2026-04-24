@@ -17,6 +17,7 @@
 –text: #e8e0d5;
 –muted: #666;
 –danger: #c87e7e;
+–hot: #e8a44a;
 }
 
 - { margin: 0; padding: 0; box-sizing: border-box; }
@@ -33,7 +34,7 @@ padding: 2rem 1rem;
 
 header {
 text-align: center;
-margin-bottom: 3rem;
+margin-bottom: 2rem;
 padding-bottom: 2rem;
 border-bottom: 1px solid var(–border);
 }
@@ -70,10 +71,7 @@ display: block;
 margin-bottom: 0.6rem;
 }
 
-.api-input-row {
-display: flex;
-gap: 0.5rem;
-}
+.api-input-row { display: flex; gap: 0.5rem; }
 
 input[type=“text”] {
 flex: 1;
@@ -101,16 +99,9 @@ padding: 0.6rem 1rem;
 transition: all 0.2s;
 }
 
-.btn-save {
-background: var(–border);
-color: var(–muted);
-}
+.btn-save { background: var(–border); color: var(–muted); }
 .btn-save:hover { background: #333; color: var(–text); }
-
-.btn-save.saved {
-background: var(–accent2);
-color: var(–bg);
-}
+.btn-save.saved { background: var(–accent2); color: var(–bg); }
 
 .api-guide {
 margin-top: 0.8rem;
@@ -120,10 +111,7 @@ color: var(–muted);
 line-height: 1.8;
 }
 
-.api-guide a {
-color: var(–accent);
-text-decoration: none;
-}
+.api-guide a { color: var(–accent); text-decoration: none; }
 
 .regions {
 display: grid;
@@ -155,12 +143,65 @@ background: var(–accent);
 color: var(–bg);
 font-size: 0.8rem;
 padding: 0.9rem;
-margin-bottom: 2rem;
+margin-bottom: 1.5rem;
 letter-spacing: 0.15em;
 }
 
 .search-btn:hover { background: #d4b88a; }
 .search-btn:disabled { background: var(–border); color: var(–muted); cursor: not-allowed; }
+
+.history-section { margin-bottom: 2rem; }
+
+.history-header {
+display: flex;
+align-items: center;
+justify-content: space-between;
+margin-bottom: 0.8rem;
+}
+
+.history-title {
+font-family: ‘Space Mono’, monospace;
+font-size: 0.65rem;
+color: var(–muted);
+letter-spacing: 0.1em;
+}
+
+.btn-clear-history {
+background: transparent;
+border: 1px solid var(–border);
+color: var(–muted);
+font-size: 0.6rem;
+padding: 0.3rem 0.6rem;
+}
+
+.btn-clear-history:hover { border-color: var(–danger); color: var(–danger); }
+
+.snapshot-list {
+display: flex;
+gap: 0.4rem;
+flex-wrap: wrap;
+}
+
+.snapshot-chip {
+font-family: ‘Space Mono’, monospace;
+font-size: 0.6rem;
+padding: 0.3rem 0.7rem;
+border-radius: 2px;
+border: 1px solid var(–border);
+color: var(–muted);
+cursor: pointer;
+transition: all 0.2s;
+background: var(–surface);
+}
+
+.snapshot-chip:hover { border-color: var(–accent); color: var(–accent); }
+.snapshot-chip.active { border-color: var(–accent); color: var(–accent); background: rgba(200,169,126,0.1); }
+
+.no-history {
+font-family: ‘Space Mono’, monospace;
+font-size: 0.65rem;
+color: var(–muted);
+}
 
 .loading {
 text-align: center;
@@ -188,9 +229,16 @@ animation: pulse 1.4s ease-in-out infinite;
 .results { display: none; }
 .results.active { display: block; }
 
-.region-result {
-margin-bottom: 2.5rem;
+.results-meta {
+font-family: ‘Space Mono’, monospace;
+font-size: 0.6rem;
+color: var(–muted);
+margin-bottom: 1.5rem;
+padding-bottom: 0.8rem;
+border-bottom: 1px solid var(–border);
 }
+
+.region-result { margin-bottom: 2.5rem; }
 
 .region-header {
 display: flex;
@@ -201,15 +249,14 @@ padding-bottom: 0.5rem;
 border-bottom: 1px solid var(–border);
 }
 
-.region-flag {
-font-size: 1.2rem;
-}
+.region-flag { font-size: 1.2rem; }
 
 .region-name {
 font-family: ‘Space Mono’, monospace;
 font-size: 0.7rem;
 color: var(–accent);
 letter-spacing: 0.1em;
+flex: 1;
 }
 
 .song-list { list-style: none; }
@@ -224,9 +271,7 @@ animation: fadeIn 0.4s ease forwards;
 opacity: 0;
 }
 
-@keyframes fadeIn {
-to { opacity: 1; }
-}
+@keyframes fadeIn { to { opacity: 1; } }
 
 .song-rank {
 font-family: ‘Space Mono’, monospace;
@@ -271,14 +316,28 @@ letter-spacing: 0.05em;
 .tag-cover { background: rgba(200,169,126,0.15); color: var(–accent); }
 .tag-music { background: rgba(126,200,169,0.15); color: var(–accent2); }
 .tag-trending { background: rgba(200,126,126,0.15); color: var(–danger); }
+.tag-hot { background: rgba(232,164,74,0.2); color: var(–hot); }
+
+.song-right {
+display: flex;
+flex-direction: column;
+align-items: flex-end;
+gap: 0.3rem;
+min-width: 4rem;
+}
 
 .cover-score {
 font-family: ‘Space Mono’, monospace;
 font-size: 0.6rem;
 color: var(–accent2);
 text-align: right;
-min-width: 3rem;
-padding-top: 0.15rem;
+}
+
+.streak-badge {
+font-family: ‘Space Mono’, monospace;
+font-size: 0.55rem;
+color: var(–hot);
+text-align: right;
 }
 
 .error-msg {
@@ -291,9 +350,41 @@ font-size: 0.7rem;
 color: var(–danger);
 display: none;
 line-height: 1.7;
+margin-bottom: 1rem;
+white-space: pre-wrap;
 }
 
 .error-msg.active { display: block; }
+
+.filter-tabs {
+display: flex;
+gap: 0.4rem;
+margin-bottom: 1.5rem;
+}
+
+.filter-tab {
+font-family: ‘Space Mono’, monospace;
+font-size: 0.65rem;
+letter-spacing: 0.08em;
+padding: 0.5rem 1rem;
+border-radius: 3px;
+border: 1px solid var(–border);
+background: var(–surface);
+color: var(–muted);
+cursor: pointer;
+transition: all 0.2s;
+}
+
+.filter-tab:hover { border-color: var(–accent); color: var(–text); }
+.filter-tab.active { border-color: var(–accent); color: var(–accent); background: rgba(200,169,126,0.08); }
+
+.empty-filter {
+font-family: ‘Space Mono’, monospace;
+font-size: 0.65rem;
+color: var(–muted);
+text-align: center;
+padding: 2rem 0;
+}
 
 footer {
 text-align: center;
@@ -338,7 +429,24 @@ color: var(–muted);
 
 <button class="btn search-btn" onclick="fetchTrends()">▶ 지금 트렌드 불러오기</button>
 
+  <div class="history-section">
+    <div class="history-header">
+      <span class="history-title">SNAPSHOT HISTORY</span>
+      <button class="btn btn-clear-history" onclick="clearHistory()">전체 삭제</button>
+    </div>
+    <div class="snapshot-list" id="snapshotList">
+      <span class="no-history">아직 저장된 스냅샷이 없습니다</span>
+    </div>
+  </div>
+
   <div class="error-msg" id="errorMsg"></div>
+
+  <div class="filter-tabs" id="filterTabs" style="display:none">
+    <button class="filter-tab active" onclick="setFilter('all')">전체</button>
+    <button class="filter-tab" onclick="setFilter('cover')">커버만</button>
+    <button class="filter-tab" onclick="setFilter('original')">원곡만</button>
+  </div>
+
   <div class="loading" id="loading">
     <span class="loading-dot">●</span>
     <span class="loading-dot">●</span>
@@ -348,12 +456,41 @@ color: var(–muted);
 
   <div class="results" id="results"></div>
 
-  <footer>YouTube Data API v3 · 음악 카테고리 급상승 기준</footer>
+  <footer>YouTube Data API v3 · 음악 카테고리 급상승 기준 · 스냅샷 최대 30개</footer>
 
 </div>
 
 <script>
   const MUSIC_CATEGORY_ID = '10';
+  const STORAGE_KEY = 'cover_trend_snapshots';
+  const MAX_SNAPSHOTS = 30;
+
+  const REGION_MAP = {
+    KR: { flag: '🇰🇷', name: '한국' },
+    JP: { flag: '🇯🇵', name: '일본' },
+    TW: { flag: '🇹🇼', name: '대만' },
+    HK: { flag: '🇭🇰', name: '홍콩' },
+    US: { flag: '🇺🇸', name: '미국' },
+    GB: { flag: '🇬🇧', name: '영국' },
+  };
+
+  let currentFilter = 'all';
+  let currentData = null;
+  let currentTs = null;
+  let currentIsHistory = false;
+
+  function setFilter(filter) {
+    currentFilter = filter;
+    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.filter-tab')[['all','cover','original'].indexOf(filter)]?.classList.add('active');
+    if (currentData) renderResults(currentData, currentTs, currentIsHistory);
+  }
+
+  function isCoverVideo(item) {
+    const title = (item.snippet?.title || '').toLowerCase();
+    const coverKeywords = ['cover', '커버', 'covers', 'covering', 'covered'];
+    return coverKeywords.some(k => title.includes(k));
+  }
 
   function saveKey() {
     const key = document.getElementById('apiKey').value.trim();
@@ -362,34 +499,67 @@ color: var(–muted);
     const btn = document.getElementById('saveBtn');
     btn.textContent = '저장됨';
     btn.classList.add('saved');
-    setTimeout(() => {
-      btn.textContent = '저장';
-      btn.classList.remove('saved');
-    }, 2000);
+    setTimeout(() => { btn.textContent = '저장'; btn.classList.remove('saved'); }, 2000);
   }
 
   window.onload = () => {
     const saved = localStorage.getItem('yt_api_key');
     if (saved) document.getElementById('apiKey').value = saved;
+    renderSnapshotChips();
   };
 
-  function toggleRegion(btn) {
-    btn.classList.toggle('active');
-  }
+  function toggleRegion(btn) { btn.classList.toggle('active'); }
 
   function getActiveRegions() {
     return [...document.querySelectorAll('.region-btn.active')].map(b => ({
-      code: b.dataset.code,
-      flag: b.dataset.flag,
-      name: b.dataset.name
+      code: b.dataset.code, flag: b.dataset.flag, name: b.dataset.name
     }));
   }
 
-  function isMusicRelated(item) {
-    const title = (item.snippet?.title || '').toLowerCase();
-    const tags = (item.snippet?.tags || []).join(' ').toLowerCase();
-    const musicKeywords = ['cover', 'official', 'mv', 'lyrics', 'audio', 'live', 'performance', 'song', 'music', '커버', '가사', '뮤직', '노래', 'covered', 'acoustic'];
-    return musicKeywords.some(k => title.includes(k) || tags.includes(k));
+  function getSnapshots() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); }
+    catch { return []; }
+  }
+
+  function saveSnapshot(data) {
+    let snapshots = getSnapshots();
+    const ts = Date.now();
+    const dateStr = new Date(ts).toLocaleDateString('ko-KR', {
+      month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit'
+    });
+    snapshots.unshift({ ts, dateStr, data });
+    if (snapshots.length > MAX_SNAPSHOTS) snapshots = snapshots.slice(0, MAX_SNAPSHOTS);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(snapshots));
+    renderSnapshotChips();
+    return ts;
+  }
+
+  function clearHistory() {
+    if (!confirm('모든 스냅샷을 삭제할까요?')) return;
+    localStorage.removeItem(STORAGE_KEY);
+    renderSnapshotChips();
+    document.getElementById('results').classList.remove('active');
+    document.getElementById('results').innerHTML = '';
+  }
+
+  function renderSnapshotChips() {
+    const snapshots = getSnapshots();
+    const list = document.getElementById('snapshotList');
+    if (!snapshots.length) {
+      list.innerHTML = '<span class="no-history">아직 저장된 스냅샷이 없습니다</span>';
+      return;
+    }
+    list.innerHTML = snapshots.map((s, i) =>
+      `<span class="snapshot-chip" onclick="loadSnapshot(${i})">${s.dateStr}</span>`
+    ).join('');
+  }
+
+  function loadSnapshot(idx) {
+    const snapshots = getSnapshots();
+    if (!snapshots[idx]) return;
+    document.querySelectorAll('.snapshot-chip').forEach(c => c.classList.remove('active'));
+    document.querySelectorAll('.snapshot-chip')[idx]?.classList.add('active');
+    renderResults(snapshots[idx].data, snapshots[idx].ts, true);
   }
 
   function getCoverScore(item) {
@@ -410,6 +580,100 @@ color: var(–muted);
     return '참고용';
   }
 
+  function getStreak(videoId, regionCode, currentTs) {
+    const snapshots = getSnapshots();
+    if (!snapshots.length) return 0;
+    let streak = 0;
+    const oneDayMs = 86400000;
+    for (const snap of snapshots) {
+      if (snap.ts >= currentTs) continue;
+      if ((currentTs - snap.ts) > 90 * oneDayMs) break;
+      const regionData = snap.data?.find(d => d.regionCode === regionCode);
+      if (!regionData) continue;
+      if (regionData.items?.some(item => item.id === videoId)) streak++;
+      else break;
+    }
+    return streak;
+  }
+
+  function renderResults(regionDataArr, ts, isHistory) {
+    currentData = regionDataArr;
+    currentTs = ts;
+    currentIsHistory = isHistory;
+
+    document.getElementById('filterTabs').style.display = 'flex';
+
+    const results = document.getElementById('results');
+    const dateStr = new Date(ts).toLocaleString('ko-KR');
+    let html = `<div class="results-meta">${isHistory ? '📁 히스토리' : '🔴 최신'} · ${dateStr} 기준</div>`;
+
+    for (const { regionCode, items } of regionDataArr) {
+      if (!items?.length) continue;
+      const region = REGION_MAP[regionCode] || { flag: '🌐', name: regionCode };
+
+      let filtered = items;
+      if (currentFilter === 'cover') filtered = items.filter(isCoverVideo);
+      else if (currentFilter === 'original') filtered = items.filter(item => !isCoverVideo(item));
+
+      if (!filtered.length) {
+        html += `
+          <div class="region-result">
+            <div class="region-header">
+              <span class="region-flag">${region.flag}</span>
+              <span class="region-name">${region.name}</span>
+            </div>
+            <div class="empty-filter">해당 필터에 맞는 항목이 없습니다</div>
+          </div>`;
+        continue;
+      }
+
+      const songs = filtered.map((item, i) => {
+        const title = item.snippet?.title || '';
+        const channel = item.snippet?.channelTitle || '';
+        const score = getCoverScore(item);
+        const label = getCoverLabel(score);
+        const isCover = isCoverVideo(item);
+        const streak = getStreak(item.id, regionCode, ts);
+        const delay = i * 0.05;
+
+        const streakHtml = streak >= 2
+          ? `<span class="streak-badge">🔥 ${streak}일째</span>`
+          : streak === 1 ? `<span class="streak-badge">📈 어제도</span>` : '';
+
+        return `
+          <li class="song-item" style="animation-delay:${delay}s">
+            <span class="song-rank">${String(i+1).padStart(2,'0')}</span>
+            <div class="song-info">
+              <div class="song-title">${title}</div>
+              <div class="song-channel">${channel}</div>
+              <div class="song-tags">
+                <span class="tag tag-music">음악</span>
+                ${isCover ? '<span class="tag tag-cover">커버</span>' : ''}
+                <span class="tag tag-trending">급상승</span>
+                ${streak >= 3 ? '<span class="tag tag-hot">HOT</span>' : ''}
+              </div>
+            </div>
+            <div class="song-right">
+              <span class="cover-score">${label}</span>
+              ${streakHtml}
+            </div>
+          </li>`;
+      }).join('');
+
+      html += `
+        <div class="region-result">
+          <div class="region-header">
+            <span class="region-flag">${region.flag}</span>
+            <span class="region-name">${region.name}</span>
+          </div>
+          <ul class="song-list">${songs}</ul>
+        </div>`;
+    }
+
+    results.innerHTML = html;
+    results.classList.add('active');
+  }
+
   async function fetchRegion(apiKey, regionCode) {
     const url = `https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics&chart=mostPopular&regionCode=${regionCode}&videoCategoryId=${MUSIC_CATEGORY_ID}&maxResults=15&key=${apiKey}`;
     const res = await fetch(url);
@@ -417,59 +681,16 @@ color: var(–muted);
       const err = await res.json();
       throw new Error(err.error?.message || `API 오류 (${res.status})`);
     }
-    return res.json();
-  }
-
-  function renderRegion(region, data) {
-    const items = data.items || [];
-    if (!items.length) return '';
-
-    const songs = items.map((item, i) => {
-      const title = item.snippet?.title || '';
-      const channel = item.snippet?.channelTitle || '';
-      const score = getCoverScore(item);
-      const label = getCoverLabel(score);
-      const isCover = title.toLowerCase().includes('cover') || title.includes('커버');
-      const delay = i * 0.05;
-
-      return `
-        <li class="song-item" style="animation-delay:${delay}s">
-          <span class="song-rank">${String(i+1).padStart(2,'0')}</span>
-          <div class="song-info">
-            <div class="song-title">${title}</div>
-            <div class="song-channel">${channel}</div>
-            <div class="song-tags">
-              <span class="tag tag-music">음악</span>
-              ${isCover ? '<span class="tag tag-cover">커버</span>' : ''}
-              <span class="tag tag-trending">급상승</span>
-            </div>
-          </div>
-          <div class="cover-score">${label}</div>
-        </li>`;
-    }).join('');
-
-    return `
-      <div class="region-result">
-        <div class="region-header">
-          <span class="region-flag">${region.flag}</span>
-          <span class="region-name">${region.name}</span>
-        </div>
-        <ul class="song-list">${songs}</ul>
-      </div>`;
+    const json = await res.json();
+    return { regionCode, items: json.items || [] };
   }
 
   async function fetchTrends() {
     const apiKey = document.getElementById('apiKey').value.trim();
-    if (!apiKey) {
-      showError('API 키를 입력해주세요.');
-      return;
-    }
+    if (!apiKey) { showError('API 키를 입력해주세요.'); return; }
 
     const regions = getActiveRegions();
-    if (!regions.length) {
-      showError('지역을 하나 이상 선택해주세요.');
-      return;
-    }
+    if (!regions.length) { showError('지역을 하나 이상 선택해주세요.'); return; }
 
     const loading = document.getElementById('loading');
     const results = document.getElementById('results');
@@ -479,18 +700,12 @@ color: var(–muted);
     results.classList.remove('active');
     results.innerHTML = '';
     loading.classList.add('active');
+    document.querySelectorAll('.snapshot-chip').forEach(c => c.classList.remove('active'));
 
     try {
-      const fetches = regions.map(r => fetchRegion(apiKey, r.code).then(data => ({ region: r, data })));
-      const allResults = await Promise.all(fetches);
-
-      let html = '';
-      for (const { region, data } of allResults) {
-        html += renderRegion(region, data);
-      }
-
-      results.innerHTML = html;
-      results.classList.add('active');
+      const allResults = await Promise.all(regions.map(r => fetchRegion(apiKey, r.code)));
+      const ts = saveSnapshot(allResults);
+      renderResults(allResults, ts, false);
     } catch (err) {
       showError(`오류: ${err.message}\n\nAPI 키가 올바른지, YouTube Data API v3가 활성화되어 있는지 확인해주세요.`);
     } finally {
