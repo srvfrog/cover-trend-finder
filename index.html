@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>커버곡 트렌드 파인더</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;600&family=Space+Mono:wght@400;700&display=swap');
+
+:root {
+–bg: #0d0d0d;
+–surface: #161616;
+–border: #2a2a2a;
+–accent: #c8a97e;
+–accent2: #7ec8a9;
+–text: #e8e0d5;
+–muted: #666;
+–danger: #c87e7e;
+}
+
+- { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+background: var(–bg);
+color: var(–text);
+font-family: ‘Noto Serif KR’, serif;
+min-height: 100vh;
+padding: 2rem 1rem;
+}
+
+.container { max-width: 720px; margin: 0 auto; }
+
+header {
+text-align: center;
+margin-bottom: 3rem;
+padding-bottom: 2rem;
+border-bottom: 1px solid var(–border);
+}
+
+header h1 {
+font-size: 1.6rem;
+font-weight: 300;
+letter-spacing: 0.1em;
+color: var(–accent);
+margin-bottom: 0.4rem;
+}
+
+header p {
+font-family: ‘Space Mono’, monospace;
+font-size: 0.7rem;
+color: var(–muted);
+letter-spacing: 0.05em;
+}
+
+.api-section {
+background: var(–surface);
+border: 1px solid var(–border);
+border-radius: 4px;
+padding: 1.5rem;
+margin-bottom: 1.5rem;
+}
+
+.api-section label {
+font-family: ‘Space Mono’, monospace;
+font-size: 0.7rem;
+color: var(–muted);
+letter-spacing: 0.1em;
+display: block;
+margin-bottom: 0.6rem;
+}
+
+.api-input-row {
+display: flex;
+gap: 0.5rem;
+}
+
+input[type=“text”] {
+flex: 1;
+background: var(–bg);
+border: 1px solid var(–border);
+border-radius: 3px;
+color: var(–text);
+font-family: ‘Space Mono’, monospace;
+font-size: 0.75rem;
+padding: 0.6rem 0.8rem;
+outline: none;
+transition: border-color 0.2s;
+}
+
+input[type=“text”]:focus { border-color: var(–accent); }
+
+.btn {
+font-family: ‘Space Mono’, monospace;
+font-size: 0.7rem;
+letter-spacing: 0.08em;
+border: none;
+border-radius: 3px;
+cursor: pointer;
+padding: 0.6rem 1rem;
+transition: all 0.2s;
+}
+
+.btn-save {
+background: var(–border);
+color: var(–muted);
+}
+.btn-save:hover { background: #333; color: var(–text); }
+
+.btn-save.saved {
+background: var(–accent2);
+color: var(–bg);
+}
+
+.api-guide {
+margin-top: 0.8rem;
+font-family: ‘Space Mono’, monospace;
+font-size: 0.65rem;
+color: var(–muted);
+line-height: 1.8;
+}
+
+.api-guide a {
+color: var(–accent);
+text-decoration: none;
+}
+
+.regions {
+display: grid;
+grid-template-columns: repeat(3, 1fr);
+gap: 0.5rem;
+margin-bottom: 1.5rem;
+}
+
+.region-btn {
+background: var(–surface);
+border: 1px solid var(–border);
+border-radius: 3px;
+color: var(–muted);
+font-family: ‘Space Mono’, monospace;
+font-size: 0.65rem;
+letter-spacing: 0.05em;
+padding: 0.6rem;
+cursor: pointer;
+transition: all 0.2s;
+text-align: center;
+}
+
+.region-btn:hover { border-color: var(–accent); color: var(–text); }
+.region-btn.active { border-color: var(–accent); color: var(–accent); background: rgba(200,169,126,0.08); }
+
+.search-btn {
+width: 100%;
+background: var(–accent);
+color: var(–bg);
+font-size: 0.8rem;
+padding: 0.9rem;
+margin-bottom: 2rem;
+letter-spacing: 0.15em;
+}
+
+.search-btn:hover { background: #d4b88a; }
+.search-btn:disabled { background: var(–border); color: var(–muted); cursor: not-allowed; }
+
+.loading {
+text-align: center;
+padding: 3rem;
+font-family: ‘Space Mono’, monospace;
+font-size: 0.7rem;
+color: var(–muted);
+display: none;
+}
+
+.loading.active { display: block; }
+
+.loading-dot {
+display: inline-block;
+animation: pulse 1.4s ease-in-out infinite;
+}
+.loading-dot:nth-child(2) { animation-delay: 0.2s; }
+.loading-dot:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes pulse {
+0%, 80%, 100% { opacity: 0.2; }
+40% { opacity: 1; }
+}
+
+.results { display: none; }
+.results.active { display: block; }
+
+.region-result {
+margin-bottom: 2.5rem;
+}
+
+.region-header {
+display: flex;
+align-items: center;
+gap: 1rem;
+margin-bottom: 1rem;
+padding-bottom: 0.5rem;
+border-bottom: 1px solid var(–border);
+}
+
+.region-flag {
+font-size: 1.2rem;
+}
+
+.region-name {
+font-family: ‘Space Mono’, monospace;
+font-size: 0.7rem;
+color: var(–accent);
+letter-spacing: 0.1em;
+}
+
+.song-list { list-style: none; }
+
+.song-item {
+display: flex;
+align-items: flex-start;
+gap: 1rem;
+padding: 0.9rem 0;
+border-bottom: 1px solid #1a1a1a;
+animation: fadeIn 0.4s ease forwards;
+opacity: 0;
+}
+
+@keyframes fadeIn {
+to { opacity: 1; }
+}
+
+.song-rank {
+font-family: ‘Space Mono’, monospace;
+font-size: 0.65rem;
+color: var(–muted);
+min-width: 1.5rem;
+padding-top: 0.15rem;
+}
+
+.song-info { flex: 1; min-width: 0; }
+
+.song-title {
+font-size: 0.9rem;
+font-weight: 400;
+margin-bottom: 0.2rem;
+white-space: nowrap;
+overflow: hidden;
+text-overflow: ellipsis;
+}
+
+.song-channel {
+font-family: ‘Space Mono’, monospace;
+font-size: 0.6rem;
+color: var(–muted);
+}
+
+.song-tags {
+display: flex;
+gap: 0.3rem;
+margin-top: 0.4rem;
+flex-wrap: wrap;
+}
+
+.tag {
+font-family: ‘Space Mono’, monospace;
+font-size: 0.55rem;
+padding: 0.15rem 0.4rem;
+border-radius: 2px;
+letter-spacing: 0.05em;
+}
+
+.tag-cover { background: rgba(200,169,126,0.15); color: var(–accent); }
+.tag-music { background: rgba(126,200,169,0.15); color: var(–accent2); }
+.tag-trending { background: rgba(200,126,126,0.15); color: var(–danger); }
+
+.cover-score {
+font-family: ‘Space Mono’, monospace;
+font-size: 0.6rem;
+color: var(–accent2);
+text-align: right;
+min-width: 3rem;
+padding-top: 0.15rem;
+}
+
+.error-msg {
+background: rgba(200,126,126,0.1);
+border: 1px solid rgba(200,126,126,0.3);
+border-radius: 3px;
+padding: 1rem;
+font-family: ‘Space Mono’, monospace;
+font-size: 0.7rem;
+color: var(–danger);
+display: none;
+line-height: 1.7;
+}
+
+.error-msg.active { display: block; }
+
+footer {
+text-align: center;
+margin-top: 3rem;
+padding-top: 1.5rem;
+border-top: 1px solid var(–border);
+font-family: ‘Space Mono’, monospace;
+font-size: 0.6rem;
+color: var(–muted);
+}
+</style>
+
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <h1>커버곡 트렌드 파인더</h1>
+    <p>YouTube 급상승 음악 기준 · 지역별 커버 후보 추출</p>
+  </header>
+
+  <div class="api-section">
+    <label>YOUTUBE DATA API KEY</label>
+    <div class="api-input-row">
+      <input type="text" id="apiKey" placeholder="AIza..." />
+      <button class="btn btn-save" id="saveBtn" onclick="saveKey()">저장</button>
+    </div>
+    <div class="api-guide">
+      발급: <a href="https://console.cloud.google.com/" target="_blank">console.cloud.google.com</a>
+      → 프로젝트 생성 → YouTube Data API v3 활성화 → 사용자 인증 정보 → API 키 생성
+    </div>
+  </div>
+
+  <div class="regions">
+    <button class="region-btn active" data-code="KR" data-flag="🇰🇷" data-name="한국" onclick="toggleRegion(this)">🇰🇷 한국</button>
+    <button class="region-btn active" data-code="JP" data-flag="🇯🇵" data-name="일본" onclick="toggleRegion(this)">🇯🇵 일본</button>
+    <button class="region-btn active" data-code="TW" data-flag="🇹🇼" data-name="대만" onclick="toggleRegion(this)">🇹🇼 대만</button>
+    <button class="region-btn active" data-code="HK" data-flag="🇭🇰" data-name="홍콩" onclick="toggleRegion(this)">🇭🇰 홍콩</button>
+    <button class="region-btn active" data-code="US" data-flag="🇺🇸" data-name="미국" onclick="toggleRegion(this)">🇺🇸 미국</button>
+    <button class="region-btn active" data-code="GB" data-flag="🇬🇧" data-name="영국" onclick="toggleRegion(this)">🇬🇧 영국</button>
+  </div>
+
+<button class="btn search-btn" onclick="fetchTrends()">▶ 지금 트렌드 불러오기</button>
+
+  <div class="error-msg" id="errorMsg"></div>
+  <div class="loading" id="loading">
+    <span class="loading-dot">●</span>
+    <span class="loading-dot">●</span>
+    <span class="loading-dot">●</span>
+    <br><br>트렌드 수집 중
+  </div>
+
+  <div class="results" id="results"></div>
+
+  <footer>YouTube Data API v3 · 음악 카테고리 급상승 기준</footer>
+
+</div>
+
+<script>
+  const MUSIC_CATEGORY_ID = '10';
+
+  function saveKey() {
+    const key = document.getElementById('apiKey').value.trim();
+    if (!key) return;
+    localStorage.setItem('yt_api_key', key);
+    const btn = document.getElementById('saveBtn');
+    btn.textContent = '저장됨';
+    btn.classList.add('saved');
+    setTimeout(() => {
+      btn.textContent = '저장';
+      btn.classList.remove('saved');
+    }, 2000);
+  }
+
+  window.onload = () => {
+    const saved = localStorage.getItem('yt_api_key');
+    if (saved) document.getElementById('apiKey').value = saved;
+  };
+
+  function toggleRegion(btn) {
+    btn.classList.toggle('active');
+  }
+
+  function getActiveRegions() {
+    return [...document.querySelectorAll('.region-btn.active')].map(b => ({
+      code: b.dataset.code,
+      flag: b.dataset.flag,
+      name: b.dataset.name
+    }));
+  }
+
+  function isMusicRelated(item) {
+    const title = (item.snippet?.title || '').toLowerCase();
+    const tags = (item.snippet?.tags || []).join(' ').toLowerCase();
+    const musicKeywords = ['cover', 'official', 'mv', 'lyrics', 'audio', 'live', 'performance', 'song', 'music', '커버', '가사', '뮤직', '노래', 'covered', 'acoustic'];
+    return musicKeywords.some(k => title.includes(k) || tags.includes(k));
+  }
+
+  function getCoverScore(item) {
+    const title = (item.snippet?.title || '').toLowerCase();
+    let score = 0;
+    if (title.includes('cover') || title.includes('커버')) score += 3;
+    if (title.includes('acoustic') || title.includes('어쿠스틱')) score += 2;
+    if (title.includes('official mv') || title.includes('official video')) score -= 1;
+    if (title.includes('live')) score += 1;
+    if (title.includes('lyrics')) score += 1;
+    return Math.max(0, Math.min(5, score + 3));
+  }
+
+  function getCoverLabel(score) {
+    if (score >= 5) return '커버 최적';
+    if (score >= 4) return '커버 추천';
+    if (score >= 3) return '커버 가능';
+    return '참고용';
+  }
+
+  async function fetchRegion(apiKey, regionCode) {
+    const url = `https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics&chart=mostPopular&regionCode=${regionCode}&videoCategoryId=${MUSIC_CATEGORY_ID}&maxResults=15&key=${apiKey}`;
+    const res = await fetch(url);
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error?.message || `API 오류 (${res.status})`);
+    }
+    return res.json();
+  }
+
+  function renderRegion(region, data) {
+    const items = data.items || [];
+    if (!items.length) return '';
+
+    const songs = items.map((item, i) => {
+      const title = item.snippet?.title || '';
+      const channel = item.snippet?.channelTitle || '';
+      const score = getCoverScore(item);
+      const label = getCoverLabel(score);
+      const isCover = title.toLowerCase().includes('cover') || title.includes('커버');
+      const delay = i * 0.05;
+
+      return `
+        <li class="song-item" style="animation-delay:${delay}s">
+          <span class="song-rank">${String(i+1).padStart(2,'0')}</span>
+          <div class="song-info">
+            <div class="song-title">${title}</div>
+            <div class="song-channel">${channel}</div>
+            <div class="song-tags">
+              <span class="tag tag-music">음악</span>
+              ${isCover ? '<span class="tag tag-cover">커버</span>' : ''}
+              <span class="tag tag-trending">급상승</span>
+            </div>
+          </div>
+          <div class="cover-score">${label}</div>
+        </li>`;
+    }).join('');
+
+    return `
+      <div class="region-result">
+        <div class="region-header">
+          <span class="region-flag">${region.flag}</span>
+          <span class="region-name">${region.name}</span>
+        </div>
+        <ul class="song-list">${songs}</ul>
+      </div>`;
+  }
+
+  async function fetchTrends() {
+    const apiKey = document.getElementById('apiKey').value.trim();
+    if (!apiKey) {
+      showError('API 키를 입력해주세요.');
+      return;
+    }
+
+    const regions = getActiveRegions();
+    if (!regions.length) {
+      showError('지역을 하나 이상 선택해주세요.');
+      return;
+    }
+
+    const loading = document.getElementById('loading');
+    const results = document.getElementById('results');
+    const errorMsg = document.getElementById('errorMsg');
+
+    errorMsg.classList.remove('active');
+    results.classList.remove('active');
+    results.innerHTML = '';
+    loading.classList.add('active');
+
+    try {
+      const fetches = regions.map(r => fetchRegion(apiKey, r.code).then(data => ({ region: r, data })));
+      const allResults = await Promise.all(fetches);
+
+      let html = '';
+      for (const { region, data } of allResults) {
+        html += renderRegion(region, data);
+      }
+
+      results.innerHTML = html;
+      results.classList.add('active');
+    } catch (err) {
+      showError(`오류: ${err.message}\n\nAPI 키가 올바른지, YouTube Data API v3가 활성화되어 있는지 확인해주세요.`);
+    } finally {
+      loading.classList.remove('active');
+    }
+  }
+
+  function showError(msg) {
+    const el = document.getElementById('errorMsg');
+    el.textContent = msg;
+    el.classList.add('active');
+  }
+</script>
+
+</body>
+</html>
